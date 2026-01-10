@@ -4,9 +4,10 @@ const path = require("path");
 const express = require("express");
 const app = express();
 app.use(express.json());
-mongoose.connect("mongodb://127.0.0.1:27017/yoga_rag_app")
-  .then(() => console.log("MongoDB connected successfully"))
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => console.log("MongoDB connected"))
   .catch(err => console.error("MongoDB connection error:", err));
+
 const querySchema = new mongoose.Schema({
   question: String,
   isUnsafe: Boolean,
