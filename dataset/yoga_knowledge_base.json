@@ -1,0 +1,48 @@
+[
+  {
+    "id": "article_001",
+    "title": "What is Pranayama",
+    "category": "pranayama",
+    "difficulty": "beginner",
+    "content": "Pranayama is the practice of controlling and regulating the breath. It helps balance the body, mind, and emotions through conscious breathing.",
+    "contraindications": [
+      "high blood pressure",
+      "pregnancy",
+      "heart disease",
+      "recent surgery"
+    ],
+    "source": "Yoga Institute"
+  },    {
+    "id": "article_002",
+    "title": "Headstand (Sirsasana)",
+    "category": "asana",
+    "difficulty": "advanced",
+    "content": "Headstand is an advanced inverted yoga posture often called the King of Asanas. It improves focus and circulation but must be practiced with proper guidance.",
+    "contraindications": [
+      "high blood pressure",
+      "low blood pressure",
+      "glaucoma",
+      "neck injury",
+      "pregnancy"
+    ],
+    "source": "Hatha Yoga Texts"
+  },    {
+    "id": "article_003",
+    "title": "Yoga Contraindications and Safety Guidelines",
+    "category": "safety",
+    "difficulty": "all",
+    "content": "Certain yoga poses and breathing techniques must be avoided or modified for individuals who are pregnant, have high blood pressure, glaucoma, recent surgery, or chronic medical conditions. Yoga should always be practiced with caution and professional guidance when health risks are present.",
+    "contraindications": [
+      "pregnancy",
+      "high blood pressure",
+      "glaucoma",
+      "recent surgery",
+      "heart disease"
+    ],
+    "source": "Yoga Therapy Safety Guidelines"
+  }
+
+
+]
+
+
