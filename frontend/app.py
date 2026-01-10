@@ -16,7 +16,7 @@ st.set_page_config(
 # BACKEND CONFIG
 # =====================================
 
-BACKEND_URL = "http://localhost:3000/ask"
+BACKEND_URL = "https://yoga-wellness-rag-app.onrender.com/ask"
 # After deployment, change to:
 # BACKEND_URL = "https://your-backend.onrender.com/ask"
 
