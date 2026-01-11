@@ -7,10 +7,10 @@ const fs = require("fs");
 const path = require("path");
 
 const app = express();
-app.use(express.json()); // allows JSON input from frontend
+app.use(express.json()); // allow JSON input from frontend
 
 // ===============================
-// CONNECT TO MONGODB (CLOUD)
+// CONNECT TO MONGODB ATLAS
 // ===============================
 mongoose
   .connect(process.env.MONGODB_URI)
@@ -37,7 +37,7 @@ const QueryLog = mongoose.model("QueryLog", querySchema);
 // ===============================
 const PORT = process.env.PORT || 3000;
 
-// keywords that indicate medical risk
+// health-related risk keywords
 const unsafeKeywords = [
   "pregnant",
   "pregnancy",
@@ -49,6 +49,19 @@ const unsafeKeywords = [
   "glaucoma",
   "injury",
   "hernia"
+];
+
+// yoga domain keywords (IMPORTANT: prevents hallucination)
+const yogaDomainKeywords = [
+  "yoga",
+  "pranayama",
+  "asana",
+  "pose",
+  "breathing",
+  "breath",
+  "meditation",
+  "headstand",
+  "sirsasana"
 ];
 
 // ===============================
@@ -64,23 +77,50 @@ app.get("/", (req, res) => {
 app.post("/ask", (req, res) => {
   const userQuestion = req.body.question;
 
-  // if no question is sent
+  // -------------------------------
+  // VALIDATION
+  // -------------------------------
   if (!userQuestion) {
     return res.status(400).json({ error: "Question is required" });
   }
 
   const normalizedQuestion = userQuestion.toLowerCase();
 
-  // ===============================
+  // -------------------------------
+  // DOMAIN GUARD (STEP 5 FIX)
+  // -------------------------------
+  const isYogaQuestion = yogaDomainKeywords.some(keyword =>
+    normalizedQuestion.includes(keyword)
+  );
+
+  if (!isYogaQuestion) {
+    // log non-yoga question
+    const log = new QueryLog({
+      question: userQuestion,
+      isUnsafe: false,
+      matchedArticles: []
+    });
+    log.save();
+
+    return res.json({
+      question: userQuestion,
+      isUnsafe: false,
+      matchedArticles: [],
+      answer: "This assistant only answers yoga and wellness related questions.",
+      warning: null
+    });
+  }
+
+  // -------------------------------
   // SAFETY CHECK
-  // ===============================
+  // -------------------------------
   const isUnsafe = unsafeKeywords.some(keyword =>
     normalizedQuestion.includes(keyword)
   );
 
-  // ===============================
+  // -------------------------------
   // LOAD DATASET
-  // ===============================
+  // -------------------------------
   const dataPath = path.join(
     __dirname,
     "..",
@@ -91,30 +131,30 @@ app.post("/ask", (req, res) => {
   const rawData = fs.readFileSync(dataPath, "utf-8");
   const articles = JSON.parse(rawData);
 
-  // ===============================
-  // ARTICLE MATCHING LOGIC
-  // ===============================
+  // -------------------------------
+  // ARTICLE MATCHING (TOKEN-BASED)
+  // -------------------------------
   let matchedArticles = articles.filter(article => {
-    // break title into words (tokens)
+    // break title into words
     const titleTokens = article.title
       .toLowerCase()
       .replace(/[^a-z ]/g, "")
       .split(" ");
 
-    // match if any title word appears in question
+    // match any title word
     const titleMatch = titleTokens.some(token =>
       normalizedQuestion.includes(token)
     );
 
-    // match if category appears in question
+    // match category
     const categoryMatch = normalizedQuestion.includes(article.category);
 
     return titleMatch || categoryMatch;
   });
 
-  // ===============================
+  // -------------------------------
   // SAFETY FALLBACK (IMPORTANT)
-  // ===============================
+  // -------------------------------
   if (matchedArticles.length === 0 && isUnsafe) {
     const safetyArticle = articles.find(
       article => article.category === "safety"
@@ -124,30 +164,9 @@ app.post("/ask", (req, res) => {
     }
   }
 
-  // ===============================
-  // NON-YOGA QUESTION GUARD
-  // ===============================
-  if (matchedArticles.length === 0) {
-    // log query
-    const log = new QueryLog({
-      question: userQuestion,
-      isUnsafe,
-      matchedArticles: []
-    });
-    log.save();
-
-    return res.json({
-      question: userQuestion,
-      isUnsafe,
-      matchedArticles: [],
-      answer: "This assistant only answers yoga and wellness related questions.",
-      warning: null
-    });
-  }
-
-  // ===============================
-  // SAVE QUERY TO DATABASE
-  // ===============================
+  // -------------------------------
+  // LOG QUERY TO DATABASE
+  // -------------------------------
   const log = new QueryLog({
     question: userQuestion,
     isUnsafe,
@@ -155,9 +174,9 @@ app.post("/ask", (req, res) => {
   });
   log.save();
 
-  // ===============================
-  // SEND RESPONSE TO FRONTEND
-  // ===============================
+  // -------------------------------
+  // SEND RESPONSE
+  // -------------------------------
   res.json({
     question: userQuestion,
     isUnsafe,
