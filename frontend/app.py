@@ -1,11 +1,11 @@
 # ===============================
-# IMPORT REQUIRED LIBRARIES
+# IMPORT LIBRARIES
 # ===============================
 import streamlit as st
 import requests
 
 # ===============================
-# PAGE CONFIGURATION
+# PAGE CONFIG
 # ===============================
 st.set_page_config(
     page_title="Yoga Wellness Assistant",
@@ -14,18 +14,15 @@ st.set_page_config(
 )
 
 # ===============================
-# FORCE DARK THEME + ANIMATIONS
+# DARK THEME + ANIMATIONS (CSS)
 # ===============================
 st.markdown("""
 <style>
-
-/* Dark background */
 html, body, [class*="css"] {
     background-color: #0e1117;
     color: #eaeaea;
 }
 
-/* Title */
 .title {
     font-size: 36px;
     font-weight: bold;
@@ -34,7 +31,6 @@ html, body, [class*="css"] {
     animation: fadeIn 1s ease-in;
 }
 
-/* Subtitle */
 .subtitle {
     text-align: center;
     color: #9aa4b2;
@@ -42,7 +38,6 @@ html, body, [class*="css"] {
     animation: fadeIn 1.2s ease-in;
 }
 
-/* Article Card */
 .card {
     background: rgba(255,255,255,0.05);
     border-radius: 14px;
@@ -52,7 +47,6 @@ html, body, [class*="css"] {
     animation: slideUp 0.6s ease-out;
 }
 
-/* Warning Box */
 .warning {
     background: rgba(255,99,71,0.15);
     border-left: 4px solid tomato;
@@ -61,7 +55,6 @@ html, body, [class*="css"] {
     margin-top: 15px;
 }
 
-/* Status Badges */
 .safe {
     background: #1f7a3f;
     padding: 6px 14px;
@@ -78,7 +71,6 @@ html, body, [class*="css"] {
     display: inline-block;
 }
 
-/* Animations */
 @keyframes fadeIn {
     from {opacity: 0;}
     to {opacity: 1;}
@@ -88,7 +80,6 @@ html, body, [class*="css"] {
     from {transform: translateY(15px); opacity: 0;}
     to {transform: translateY(0); opacity: 1;}
 }
-
 </style>
 """, unsafe_allow_html=True)
 
@@ -110,7 +101,7 @@ question = st.text_input(
 )
 
 # ===============================
-# BACKEND API URL (RENDER)
+# BACKEND URL (RENDER)
 # ===============================
 BACKEND_URL = "https://yoga-wellness-rag-app.onrender.com/ask"
 
@@ -118,6 +109,7 @@ BACKEND_URL = "https://yoga-wellness-rag-app.onrender.com/ask"
 # ASK BUTTON
 # ===============================
 if st.button("✨ Ask Assistant"):
+
     if not question.strip():
         st.warning("Please enter a question.")
     else:
@@ -134,40 +126,52 @@ if st.button("✨ Ask Assistant"):
                 else:
                     data = response.json()
 
-                    # ===============================
+                    # -------------------------------
                     # SAFETY BADGE
-                    # ===============================
-                    if data["isUnsafe"]:
+                    # -------------------------------
+                    if data.get("isUnsafe"):
                         st.markdown('<span class="risk">⚠️ Caution Required</span>', unsafe_allow_html=True)
                     else:
                         st.markdown('<span class="safe">✅ Safe</span>', unsafe_allow_html=True)
 
-                    # ===============================
-                    # DISPLAY ARTICLES
-                    # ===============================
-                    if data.get("matchedArticles"):
-                        for article in data["matchedArticles"]:
+                    # -------------------------------
+                    # ARTICLES DISPLAY
+                    # -------------------------------
+                    articles = data.get("matchedArticles", [])
+
+                    if articles:
+                        for article in articles:
+                            title = article.get("title", "Untitled")
+                            summary = article.get("summary", "No summary available.")
+                            difficulty = article.get("difficulty", "N/A")
+                            category = article.get("category", "N/A")
+                            contraindications = ", ".join(article.get("contraindications", []))
+                            source = article.get("source", "Unknown")
+
                             st.markdown(f"""
                             <div class="card">
-                                <h3>{article['title']}</h3>
-                                <p><b>Summary:</b> {article['summary']}</p>
-                                <p><b>Difficulty:</b> {article['difficulty'].capitalize()}</p>
-                                <p><b>Category:</b> {article['category'].capitalize()}</p>
-                                <p><b>Contraindications:</b> {", ".join(article['contraindications'])}</p>
-                                <small><b>Source:</b> {article['source']}</small>
+                                <h3>{title}</h3>
+                                <p><b>Summary:</b> {summary}</p>
+                                <p><b>Difficulty:</b> {difficulty.capitalize() if isinstance(difficulty, str) else difficulty}</p>
+                                <p><b>Category:</b> {category.capitalize() if isinstance(category, str) else category}</p>
+                                <p><b>Contraindications:</b> {contraindications}</p>
+                                <small><b>Source:</b> {source}</small>
                             </div>
                             """, unsafe_allow_html=True)
                     else:
-                        # For non-yoga questions
-                        st.info(data.get("answer", "No relevant information found."))
+                        st.info(data.get(
+                            "answer",
+                            "This assistant only answers yoga and wellness related questions."
+                        ))
 
-                    # ===============================
+                    # -------------------------------
                     # WARNING MESSAGE
-                    # ===============================
-                    if data.get("warning"):
+                    # -------------------------------
+                    warning = data.get("warning")
+                    if warning:
                         st.markdown(f"""
                         <div class="warning">
-                            {data['warning']}
+                            {warning}
                         </div>
                         """, unsafe_allow_html=True)
 
