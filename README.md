@@ -89,17 +89,64 @@ The application is designed with **healthcare-grade guardrails**, making it suit
 
 ---
 
-## 🔍 How the System Works
 
-1. User enters a question in the Streamlit UI  
-2. Question is sent to the backend (`/ask` endpoint)  
-3. Backend checks:
-   - Is the question yoga-related?
-   - Does it involve health risks?
-4. Relevant articles are retrieved using token-based matching  
-5. Safety warnings are added if needed  
-6. Query and metadata are logged to MongoDB  
-7. Structured response is returned to the frontend
+---
+
+## 🔐 Environment Variables Setup
+
+Sensitive credentials are managed using environment variables.
+
+### Backend (`backend/.env`)
+
+Create a `.env` file inside the `backend/` directory:
+
+
+
+> ⚠️ The `.env` file is **not committed to GitHub** for security reasons.
+
+---
+
+## 🧠 RAG Pipeline Description
+
+This project follows a **rule-based Retrieval-Augmented Generation (RAG) pipeline**:
+
+1. User submits a question through the Streamlit frontend  
+2. Backend applies a **domain guard** to ensure the query is yoga-related  
+3. The question is normalized and processed  
+4. Relevant articles are retrieved using **token-based matching** from the knowledge base  
+5. Safety checks are applied for health-related keywords  
+6. Structured answers (not generated text) are returned to the frontend  
+7. Query metadata is logged to MongoDB Atlas  
+
+This ensures **accuracy, transparency, and zero hallucination**.
+
+---
+
+## ⚠️ Safety Logic Description
+
+The system implements multiple safety layers:
+
+- **Domain Guard**: Rejects non-yoga questions  
+- **Health Risk Detection**: Detects pregnancy, blood pressure, injuries, surgery, etc.  
+- **Safety Fallback**: Returns general safety guidelines if a risky query lacks a direct article  
+- **Warning Banner**: Clearly alerts users when professional guidance is required  
+
+These mechanisms make the application suitable for wellness and healthcare-adjacent use cases.
+
+---
+
+## 🗃️ Data Models
+
+### QueryLog (MongoDB)
+
+Each user interaction is stored with the following schema:
+
+- `question` (String): User’s input question  
+- `isUnsafe` (Boolean): Indicates presence of health risk  
+- `matchedArticles` (Array): Titles of retrieved articles  
+- `createdAt` (Date): Timestamp  
+
+This supports auditing, debugging, and future analytics.
 
 ---
 
@@ -107,10 +154,10 @@ The application is designed with **healthcare-grade guardrails**, making it suit
 
 The application was tested using:
 
-- Functional tests (correct article retrieval)
-- Safety tests (pregnancy, blood pressure, injury cases)
-- Negative tests (non-yoga questions)
-- UI/UX checks (dark theme, animations, responsiveness)
+- Functional tests (correct article retrieval)  
+- Safety tests (pregnancy, blood pressure, injury cases)  
+- Negative tests (non-yoga questions)  
+- UI/UX checks (dark theme, animations, responsiveness)  
 - Database validation (MongoDB logging)
 
 All tests passed successfully.
@@ -130,6 +177,46 @@ All tests passed successfully.
 
 ---
 
+## 🎥 Demo Video
+
+A 2–5 minute demo video is provided demonstrating:
+
+- Application overview  
+- Question answering flow  
+- Safety warnings  
+- Non-yoga question rejection  
+- MongoDB logging  
+
+👉 *(Add demo video link here)*
+
+---
+
+## 🧠 AI Tools / IDE Usage Disclosure
+
+The following AI tools were used **only for development assistance**:
+
+- **ChatGPT (OpenAI)**  
+  Used for:
+  - Debugging guidance  
+  - Architecture validation  
+  - UI/UX improvement suggestions  
+  - Documentation refinement  
+
+All final logic, code integration, and decisions were **implemented and reviewed manually**.
+
+---
+
+## 📱 APK File Clarification
+
+This project is implemented as a **web-based application** using Streamlit.
+
+Streamlit does not support native Android APK generation.  
+However, the application is fully functional on mobile browsers.
+
+If required, the app can be wrapped into an APK using WebView or Trusted Web Activity tools, which is outside the scope of this assignment.
+
+---
+
 ## ⚠️ Disclaimer
 
 This application is intended for **educational purposes only**.  
@@ -137,19 +224,5 @@ Yoga practices and health advice should always be followed under the guidance of
 
 ---
 
-## 🌱 Future Enhancements
-
-- Semantic search using embeddings
-- Cosine similarity ranking
-- User session history
-- Admin analytics dashboard
-- Authentication and role-based access
-
----
-
-
-
-
-
-## 🏗️ System Architecture
-
+  
+Data Science & Machine Learning Enthusiast
