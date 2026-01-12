@@ -100,10 +100,6 @@ Sensitive credentials are managed using environment variables.
 
 Create a `.env` file inside the `backend/` directory:
 
-
-
-> ⚠️ The `.env` file is **not committed to GitHub** for security reasons.
-
 ---
 
 ## 🧠 RAG Pipeline Description
@@ -208,12 +204,14 @@ All final logic, code integration, and decisions were **implemented and reviewed
 
 ## 📱 APK File Clarification
 
-This project is implemented as a **web-based application** using Streamlit.
+### UI Platform Choice
 
-Streamlit does not support native Android APK generation.  
-However, the application is fully functional on mobile browsers.
+This project is implemented as a web-based application using Streamlit,
+which is explicitly allowed as per the project specification
+(“Simple Python web UI – Streamlit”).
 
-If required, the app can be wrapped into an APK using WebView or Trusted Web Activity tools, which is outside the scope of this assignment.
+The application is fully accessible via desktop and mobile browsers.
+
 
 ---
 
@@ -225,4 +223,3 @@ Yoga practices and health advice should always be followed under the guidance of
 ---
 
   
-Data Science & Machine Learning Enthusiast
