@@ -187,7 +187,7 @@ A 2–5 minute demo video is provided demonstrating:
 - Non-yoga question rejection  
 - MongoDB logging  
 
-👉 *(Add demo video link here)*
+      https://drive.google.com/file/d/1PwALxWrvN3sPFgC29TT1gJowKvQ4yEZY/view?usp=sharing
 
 ---
 
