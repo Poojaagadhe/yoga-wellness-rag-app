@@ -163,10 +163,10 @@ All tests passed successfully.
 ## 🚀 Live Deployment
 
 - **Frontend (Streamlit Cloud):**  
-  👉 *(Add your Streamlit app URL here)*
+  👉 https://yoga-wellness-rag-app-bcsqqbtuwgiyct9aci4iqk.streamlit.app/
 
 - **Backend (Render):**  
-  👉 *(Add your backend API URL here)*
+  👉 https://docs-chat-bot.onrender.com
 
 - **GitHub Repository:**  
   👉 https://github.com/Poojaagadhe/yoga-wellness-rag-app
